@@ -1,6 +1,6 @@
 /**
  * GitHub API Adapter
- * Handles all interactions with GitHub REST API
+ * Handles all interactions with GitHub REST API through backend proxy
  */
 
 import { GitHubUser, SearchUsersResponse } from '@/entities/github-user/model';
@@ -8,11 +8,9 @@ import { GitHubRepository } from '@/entities/github-repo/model';
 
 export class GitHubAdapter {
   private baseUrl: string;
-  private apiKey: string;
 
   constructor() {
-    this.baseUrl = process.env.NEXT_PUBLIC_GITHUB_API_BASE_URL || 'https://api.github.com';
-    this.apiKey = process.env.GITHUB_API_KEY || '';
+    this.baseUrl = process.env.NEXT_PUBLIC_GITHUB_API_BASE_URL || 'http://localhost:3000/api';
   }
 
   /**
@@ -23,20 +21,28 @@ export class GitHubAdapter {
       throw new Error('Search query cannot be empty');
     }
 
-    const url = new URL(`${this.baseUrl}/search/users`);
-    url.searchParams.append('q', query);
-    url.searchParams.append('per_page', perPage.toString());
-
-    const response = await fetch(url.toString(), {
-      headers: this.getHeaders(),
-      signal: this.getAbortSignal(),
+    const params = new URLSearchParams({
+      q: query,
+      per_page: perPage.toString(),
     });
 
-    if (!response.ok) {
-      throw new Error(`GitHub API error: ${response.status} ${response.statusText}`);
-    }
+    try {
+      const response = await fetch(`${this.baseUrl}/search/users?${params.toString()}`, {
+        method: 'GET',
+        signal: this.getAbortSignal(),
+      });
 
-    return response.json();
+      if (!response.ok) {
+        throw new Error(`API error: ${response.status} ${response.statusText}`);
+      }
+
+      return response.json();
+    } catch (error) {
+      if (error instanceof Error && error.name === 'AbortError') {
+        throw new Error('Request timeout');
+      }
+      throw error;
+    }
   }
 
   /**
@@ -47,17 +53,23 @@ export class GitHubAdapter {
       throw new Error('Username cannot be empty');
     }
 
-    const url = `${this.baseUrl}/users/${username}`;
-    const response = await fetch(url, {
-      headers: this.getHeaders(),
-      signal: this.getAbortSignal(),
-    });
+    try {
+      const response = await fetch(`${this.baseUrl}/users/${username}`, {
+        method: 'GET',
+        signal: this.getAbortSignal(),
+      });
 
-    if (!response.ok) {
-      throw new Error(`GitHub API error: ${response.status} ${response.statusText}`);
+      if (!response.ok) {
+        throw new Error(`API error: ${response.status} ${response.statusText}`);
+      }
+
+      return response.json();
+    } catch (error) {
+      if (error instanceof Error && error.name === 'AbortError') {
+        throw new Error('Request timeout');
+      }
+      throw error;
     }
-
-    return response.json();
   }
 
   /**
@@ -68,21 +80,29 @@ export class GitHubAdapter {
       throw new Error('Username cannot be empty');
     }
 
-    const url = new URL(`${this.baseUrl}/users/${username}/repos`);
-    url.searchParams.append('per_page', perPage.toString());
-    url.searchParams.append('sort', 'stars');
-    url.searchParams.append('direction', 'desc');
-
-    const response = await fetch(url.toString(), {
-      headers: this.getHeaders(),
-      signal: this.getAbortSignal(),
+    const params = new URLSearchParams({
+      per_page: perPage.toString(),
+      sort: 'stars',
+      direction: 'desc',
     });
 
-    if (!response.ok) {
-      throw new Error(`GitHub API error: ${response.status} ${response.statusText}`);
-    }
+    try {
+      const response = await fetch(`${this.baseUrl}/users/${username}/repos?${params.toString()}`, {
+        method: 'GET',
+        signal: this.getAbortSignal(),
+      });
 
-    return response.json();
+      if (!response.ok) {
+        throw new Error(`API error: ${response.status} ${response.statusText}`);
+      }
+
+      return response.json();
+    } catch (error) {
+      if (error instanceof Error && error.name === 'AbortError') {
+        throw new Error('Request timeout');
+      }
+      throw error;
+    }
   }
 
   /**
@@ -93,43 +113,31 @@ export class GitHubAdapter {
       throw new Error('Owner and repository name are required');
     }
 
-    const url = `${this.baseUrl}/repos/${owner}/${repo}`;
-    const response = await fetch(url, {
-      headers: this.getHeaders(),
-      signal: this.getAbortSignal(),
-    });
+    try {
+      const response = await fetch(`${this.baseUrl}/repos/${owner}/${repo}`, {
+        method: 'GET',
+        signal: this.getAbortSignal(),
+      });
 
-    if (!response.ok) {
-      throw new Error(`GitHub API error: ${response.status} ${response.statusText}`);
+      if (!response.ok) {
+        throw new Error(`API error: ${response.status} ${response.statusText}`);
+      }
+
+      return response.json();
+    } catch (error) {
+      if (error instanceof Error && error.name === 'AbortError') {
+        throw new Error('Request timeout');
+      }
+      throw error;
     }
-
-    return response.json();
   }
 
   /**
-   * Get request headers with authorization if available
-   */
-  private getHeaders(): HeadersInit {
-    const headers: HeadersInit = {
-      'Accept': 'application/vnd.github.v3+json',
-      'Content-Type': 'application/json',
-    };
-
-    if (this.apiKey) {
-      headers['Authorization'] = `token ${this.apiKey}`;
-    }
-
-    return headers;
-  }
-
-  /**
-   * Get abort signal for request timeout (30 seconds)
+   * Get abort signal for request timeout (10 seconds)
    */
   private getAbortSignal(): AbortSignal {
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 30000);
-    
-    // This is a simplified approach; in production, cleanup should be handled differently
+    const timeoutId = setTimeout(() => controller.abort(), 10000);
     return controller.signal;
   }
 }
