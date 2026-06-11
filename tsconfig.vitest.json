@@ -1,0 +1,10 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": false,
+    "moduleResolution": "node",
+    "target": "ES2017"
+  },
+  "include": ["src", "vitest.setup.ts"],
+  "exclude": ["node_modules", ".next", "dist", "build", "cypress"]
+}

@@ -1,0 +1,12 @@
+node_modules/
+dist/
+build/
+.next/
+out/
+cypress/screenshots/
+cypress/videos/
+coverage/
+*.log
+.DS_Store
+.env.local
+.env.*.local
