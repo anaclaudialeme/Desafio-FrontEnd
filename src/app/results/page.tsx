@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useSearchUsers } from '@/shared/lib/hooks/useSearchUsers';
@@ -9,7 +9,7 @@ import { SortBy, SortOrder } from '@/shared/lib/hooks/useUserRepositories';
 import styles from './page.module.scss';
 import { useSearchParams } from 'next/navigation';
 
-export default function ResultsPage() {
+function ResultsPageContent() {
   const searchParams = useSearchParams();
   const query = searchParams.get('q') || '';
   const { users, loading, error, search } = useSearchUsers();
@@ -157,5 +157,18 @@ export default function ResultsPage() {
         </>
       )}
     </div>
+  );
+}
+
+export default function ResultsPage() {
+  return (
+    <Suspense fallback={
+      <div className={styles.loadingContainer}>
+        <div className={styles.spinner} />
+        <p>Loading...</p>
+      </div>
+    }>
+      <ResultsPageContent />
+    </Suspense>
   );
 }
