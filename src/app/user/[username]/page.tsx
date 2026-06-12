@@ -9,6 +9,7 @@ import { SearchEventFactory } from '@/shared/lib/analytics/factory';
 import { gitHubAdapter } from '@/shared/lib/api/github-adapter';
 import { GitHubUser } from '@/entities/github-user/model';
 import styles from './page.module.scss';
+import { useSearchParams } from 'next/navigation';
 
 interface UserPageProps {
   params: {
@@ -17,18 +18,12 @@ interface UserPageProps {
 }
 
 export default function UserPage({ params }: UserPageProps) {
+  const searchParams = useSearchParams();
+  const query = searchParams.get('q');
   const { username } = params;
   const [user, setUser] = useState<GitHubUser | null>(null);
   const {
-    repositories,
-    loading,
-    error,
-    sortBy,
-    sortOrder,
-    setSortBy,
-    setSortOrder,
     fetchRepositories,
-    getSortedRepositories,
   } = useUserRepositories();
 
   useEffect(() => {
@@ -49,19 +44,12 @@ export default function UserPage({ params }: UserPageProps) {
     loadUserAndRepos();
   }, [username, fetchRepositories]);
 
-  const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setSortBy(e.target.value as 'stars' | 'name');
-  };
-
-  const handleOrderToggle = () => {
-    setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
-  };
-
-  const sortedRepos = getSortedRepositories();
-
   return (
     <div className={styles.container}>
-      <Link href="/results" className={styles.backButton}>
+      <Link
+        href={query ? `/results?q=${encodeURIComponent(query)}` : '/results'}
+        className={styles.backButton}
+      >
         ← Voltar aos resultados
       </Link>
 
@@ -94,47 +82,6 @@ export default function UserPage({ params }: UserPageProps) {
               </div>
             </div>
           </div>
-        </div>
-      )}
-
-      <div className={styles.reposHeader}>
-        <h2>Repositories</h2>
-        <div className={styles.controls}>
-          <select value={sortBy} onChange={handleSortChange} className={styles.select}>
-            <option value="stars">Sort by Stars</option>
-            <option value="name">Sort by Name</option>
-          </select>
-          <button onClick={handleOrderToggle} className={styles.orderButton}>
-            {sortOrder === 'asc' ? '↑ Asc' : '↓ Desc'}
-          </button>
-        </div>
-      </div>
-
-      {error && <div className={styles.error}>{error}</div>}
-      {loading && <div className={styles.loading}>Loading repositories...</div>}
-
-      {!loading && !error && sortedRepos.length === 0 && (
-        <p className={styles.noRepos}>No repositories found.</p>
-      )}
-
-      {!loading && !error && sortedRepos.length > 0 && (
-        <div className={styles.reposList}>
-          {sortedRepos.map((repo) => (
-            <a
-              key={repo.id}
-              href={repo.html_url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={styles.repoCard}
-            >
-              <h3 className={styles.repoName}>{repo.name}</h3>
-              {repo.description && <p className={styles.repoDescription}>{repo.description}</p>}
-              <div className={styles.repoMeta}>
-                <span className={styles.language}>{repo.language || 'N/A'}</span>
-                <span className={styles.stars}>⭐ {repo.stargazers_count}</span>
-              </div>
-            </a>
-          ))}
         </div>
       )}
     </div>

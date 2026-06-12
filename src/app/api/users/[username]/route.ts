@@ -7,24 +7,18 @@ const GITHUB_TOKEN = process.env.GITHUB_API_KEY || '';
  * GET /api/users/[username]
  * Proxy endpoint to get GitHub user details
  */
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { username: string } }
-) {
+export async function GET(request: NextRequest, { params }: { params: { username: string } }) {
   try {
     const { username } = params;
 
     if (!username) {
-      return NextResponse.json(
-        { error: 'Username is required' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Username is required' }, { status: 400 });
     }
 
     const url = `${GITHUB_API_BASE_URL}/users/${username}`;
 
     const headers: HeadersInit = {
-      'Accept': 'application/vnd.github.v3+json',
+      Accept: 'application/vnd.github.v3+json',
       'Content-Type': 'application/json',
     };
 
@@ -34,7 +28,10 @@ export async function GET(
 
     const response = await fetch(url, {
       method: 'GET',
-      headers,
+      headers: {
+        Accept: 'application/vnd.github+json',
+        Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
+      },
     });
 
     if (!response.ok) {
@@ -53,9 +50,6 @@ export async function GET(
     });
   } catch (error) {
     console.error('Error fetching user details:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

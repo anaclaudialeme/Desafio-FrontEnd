@@ -14,10 +14,7 @@ export async function GET(request: NextRequest) {
     const perPage = searchParams.get('per_page') || '30';
 
     if (!query) {
-      return NextResponse.json(
-        { error: 'Search query is required' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Search query is required' }, { status: 400 });
     }
 
     const url = new URL(`${GITHUB_API_BASE_URL}/search/users`);
@@ -25,7 +22,7 @@ export async function GET(request: NextRequest) {
     url.searchParams.append('per_page', perPage);
 
     const headers: HeadersInit = {
-      'Accept': 'application/vnd.github.v3+json',
+      Accept: 'application/vnd.github.v3+json',
       'Content-Type': 'application/json',
     };
 
@@ -35,7 +32,10 @@ export async function GET(request: NextRequest) {
 
     const response = await fetch(url.toString(), {
       method: 'GET',
-      headers,
+      headers: {
+        Accept: 'application/vnd.github+json',
+        Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
+      },
     });
 
     if (!response.ok) {
@@ -54,9 +54,6 @@ export async function GET(request: NextRequest) {
     });
   } catch (error) {
     console.error('Error searching users:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

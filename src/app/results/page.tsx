@@ -1,13 +1,13 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useSearchUsers } from '@/shared/lib/hooks/useSearchUsers';
 import { SearchResultUser } from '@/entities/github-user/model';
 import { SortBy, SortOrder } from '@/shared/lib/hooks/useUserRepositories';
 import styles from './page.module.scss';
+import { useSearchParams } from 'next/navigation';
 
 export default function ResultsPage() {
   const searchParams = useSearchParams();
@@ -26,12 +26,16 @@ export default function ResultsPage() {
     let compareValue = 0;
 
     if (sortBy === 'stars') {
-      const aStars = a.primaryRepository?.stars ?? 0;
-      const bStars = b.primaryRepository?.stars ?? 0;
+      // Usuários sem repositório ficam no final
+      const aStars = a.primaryRepository?.stars ?? -1;
+      const bStars = b.primaryRepository?.stars ?? -1;
+
       compareValue = aStars - bStars;
     } else if (sortBy === 'name') {
-      const aName = a.primaryRepository?.name ?? '';
-      const bName = b.primaryRepository?.name ?? '';
+      // Ordena pelo nome do usuário (ou login caso não exista nome)
+      const aName = (a.name || a.login || '').toLowerCase();
+      const bName = (b.name || b.login || '').toLowerCase();
+
       compareValue = aName.localeCompare(bName);
     }
 
@@ -49,7 +53,9 @@ export default function ResultsPage() {
           ← Voltar a pesquisa
         </Link>
         <h1 className={styles.title}>Resultado da pesquisa</h1>
-        <p className={styles.query}>Resultado para: <strong>{query}</strong></p>
+        <p className={styles.query}>
+          Resultado para: <strong>{query}</strong>
+        </p>
       </div>
 
       {error && (
@@ -78,21 +84,21 @@ export default function ResultsPage() {
         <>
           <div className={styles.controls}>
             <div className={styles.sortGroup}>
-              <label>Sort by:</label>
+              <label>Filtrar por:</label>
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value as SortBy)}
                 className={styles.select}
               >
-                <option value="stars">Stars</option>
-                <option value="name">Repository Name</option>
+                <option value="stars">Estrelas</option>
+                <option value="name">Nome do repositório</option>
               </select>
               <button
                 onClick={toggleSortOrder}
                 className={styles.orderButton}
-                title={sortOrder === 'asc' ? 'Ascending' : 'Descending'}
+                title={sortOrder === 'asc' ? 'Crescente' : 'Decrescente'}
               >
-                {sortOrder === 'asc' ? '↑ Asc' : '↓ Desc'}
+                {sortOrder === 'asc' ? '↑ Crescente' : '↓ Decrescente'}
               </button>
             </div>
             <p className={styles.resultCount}>{users.length} usuários encontrados</p>
@@ -100,11 +106,7 @@ export default function ResultsPage() {
 
           <div className={styles.usersList}>
             {sortedUsers.map((user) => (
-              <Link
-                key={user.id}
-                href={`/user/${user.login}`}
-                className={styles.userCard}
-              >
+              <Link key={user.id} href={`/user/${user.login}?q=${encodeURIComponent(query)}`} className={styles.userCard}>
                 <div className={styles.userHeader}>
                   <Image
                     src={user.avatar_url}
@@ -138,14 +140,15 @@ export default function ResultsPage() {
                   )}
                 </div>
 
-                {user.location && (
-                  <p className={styles.userLocation}>📍 {user.location}</p>
-                )}
+                {user.location && <p className={styles.userLocation}>📍 {user.location}</p>}
 
                 {user.primaryRepository && (
                   <div className={styles.primaryRepo}>
                     <span className={styles.repoLabel}>Top Repository</span>
+
                     <p className={styles.repoName}>{user.primaryRepository.name}</p>
+
+                    <p>⭐ {user.primaryRepository.stars} stars</p>
                   </div>
                 )}
               </Link>

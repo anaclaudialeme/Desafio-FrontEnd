@@ -48,55 +48,47 @@ export function useSearchUsers(): UseSearchUsersReturn {
         const enrichedUsers: SearchResultUser[] = await Promise.all(
           result.items.map(async (user: GitHubUser) => {
             try {
-              const repos = await gitHubAdapter.getUserRepositories(user.login, 1);
+              const userDetails = await gitHubAdapter.getUserDetails(user.login).catch(() => null);
+
+              const repos = await gitHubAdapter.getUserRepositories(user.login, 1).catch(() => []);
+
               const primaryRepo = repos[0];
 
               return {
-                ...user,
-                primaryRepository: primaryRepo
+                ...(userDetails ?? user),
+                primaryRepository: repos[0]
                   ? {
-                      name: primaryRepo.name,
-                      stars: primaryRepo.stargazers_count,
+                      name: repos[0].name,
+                      stars: repos[0].stargazers_count,
                     }
                   : undefined,
               };
-            } catch {
+            } catch (err) {
+              console.error('Error processing user', user.login, err);
+
               return user as SearchResultUser;
             }
-          }),
+          })
         );
 
         setUsers(enrichedUsers);
 
         // Send analytics event
-        const event = SearchEventFactory.createSearchEvent(
-          query,
-          enrichedUsers.length,
-          true,
-        );
-        await analyticsAdapter.sendEvent(
-          SearchEventFactory.toDTO(event),
-        );
+        const event = SearchEventFactory.createSearchEvent(query, enrichedUsers.length, true);
+        await analyticsAdapter.sendEvent(SearchEventFactory.toDTO(event));
       } catch (err) {
         const errorMessage = err instanceof Error ? err.message : 'Unknown error';
         setError(errorMessage);
         setUsers([]);
 
         // Send error analytics event
-        const event = SearchEventFactory.createSearchEvent(
-          query,
-          0,
-          false,
-          errorMessage,
-        );
-        await analyticsAdapter.sendEvent(
-          SearchEventFactory.toDTO(event),
-        );
+        const event = SearchEventFactory.createSearchEvent(query, 0, false, errorMessage);
+        await analyticsAdapter.sendEvent(SearchEventFactory.toDTO(event));
       } finally {
         setLoading(false);
       }
     },
-    [correlationId],
+    [correlationId]
   );
 
   return { users, loading, error, search, correlationId };

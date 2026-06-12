@@ -24,15 +24,16 @@ export class AnalyticsAdapter {
 
       const response = await fetch(url, {
         method: 'POST',
-        headers,
+        headers: {
+          Accept: 'application/vnd.github+json',
+          Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
+        },
         body: JSON.stringify(event),
         signal: this.getAbortSignal(),
       });
 
       if (!response.ok) {
-        throw new Error(
-          `Analytics API error: ${response.status} ${response.statusText}`,
-        );
+        throw new Error(`Analytics API error: ${response.status} ${response.statusText}`);
       }
 
       const result: AnalyticsResponse = await response.json();
@@ -76,7 +77,7 @@ export class AnalyticsAdapter {
   private log(
     level: 'info' | 'warn' | 'error',
     message: string,
-    context?: Record<string, any>,
+    context?: Record<string, any>
   ): void {
     if (process.env.NODE_ENV === 'development') {
       console.log(`[AnalyticsAdapter:${level}] ${message}`, context);
