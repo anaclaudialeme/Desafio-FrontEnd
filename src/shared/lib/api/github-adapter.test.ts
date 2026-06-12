@@ -45,7 +45,7 @@ describe('GitHubAdapter', () => {
       (global.fetch as any).mockResolvedValueOnce(mockResponse);
 
       await expect(adapter.searchUsers('test')).rejects.toThrow(
-        'GitHub API error: 403 Forbidden',
+        'API error: 403 Forbidden',
       );
     });
   });

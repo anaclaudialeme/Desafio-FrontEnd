@@ -135,7 +135,7 @@ describe('SearchEventFactory', () => {
       const model = SearchEventFactory.createSearchEvent('test', 5, true);
       const dto = SearchEventFactory.toDTO(model);
 
-      expect(dto.username).toBe(null);
+      expect(dto.username).toBe(undefined);
       expect(dto.repoName).toBe(null);
       expect(dto.stars).toBe(null);
     });
