@@ -148,7 +148,7 @@ export default function ResultsPage() {
 
                     <p className={styles.repoName}>{user.primaryRepository.name}</p>
 
-                    <p>⭐ {user.primaryRepository.stars} stars</p>
+                    <p>⭐ {user.primaryRepository.stars} estrelas</p>
                   </div>
                 )}
               </Link>
