@@ -1,5 +1,6 @@
 #!/bin/bash
 # Lint and format script
 
-eslint src --fix
+next lint
 prettier --write src
+
