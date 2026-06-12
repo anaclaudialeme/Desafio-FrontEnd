@@ -30,7 +30,7 @@ export async function GET(request: NextRequest, { params }: { params: { username
       method: 'GET',
       headers: {
         Accept: 'application/vnd.github+json',
-        Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
+        Authorization: `Bearer ${process.env.GITHUB_API_BASE_URL}`,
       },
     });
 

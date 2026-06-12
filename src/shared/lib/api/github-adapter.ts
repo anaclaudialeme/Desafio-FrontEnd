@@ -10,7 +10,7 @@ export class GitHubAdapter {
   private baseUrl: string;
 
   constructor() {
-    this.baseUrl = process.env.NEXT_PUBLIC_GITHUB_API_BASE_URL || 'http://localhost:3000/api';
+    this.baseUrl = process.env.GITHUB_API_BASE_URL  || 'https://api.github.com';
   }
 
   /**
