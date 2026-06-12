@@ -1,0 +1,16 @@
+[
+  {
+    "id": 1,
+    "login": "octocat",
+    "name": "The Octocat",
+    "avatar_url": "https://github.com/images/error/octocat_happy.gif",
+    "followers": 100,
+    "following": 50,
+    "location": "San Francisco",
+    "bio": "GitHub mascot",
+    "primaryRepository": {
+      "name": "hello-world",
+      "stars": 500
+    }
+  }
+]
