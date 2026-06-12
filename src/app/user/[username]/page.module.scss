@@ -1,0 +1,249 @@
+$primary: #667eea;
+$secondary: #764ba2;
+
+$text-primary: #333;
+$text-secondary: #666;
+$text-muted: #999;
+
+$background: #f5f5f5;
+$white: #fff;
+
+$border: #e0e0e0;
+$border-light: #f0f0f0;
+
+$error: #c00;
+$error-bg: #fee;
+$error-border: #fcc;
+
+$shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.1);
+$shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.15);
+
+.container {
+  min-height: 100vh;
+  background-color: $background;
+  padding: 20px;
+}
+
+.backButton {
+  display: inline-block;
+  margin-bottom: 20px;
+  color: $primary;
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.3s;
+
+  &:hover {
+    color: $secondary;
+  }
+}
+
+.userCard {
+  max-width: 1200px;
+  margin: 0 auto 30px;
+  background: $white;
+  border-radius: 12px;
+  padding: 30px;
+  box-shadow: $shadow-sm;
+  display: flex;
+  gap: 30px;
+  align-items: flex-start;
+}
+
+.avatar {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.userInfo {
+  flex: 1;
+}
+
+.userName {
+  font-size: 28px;
+  font-weight: 700;
+  color: $text-primary;
+  margin: 0 0 5px;
+}
+
+.userLogin {
+  font-size: 16px;
+  color: $primary;
+  font-weight: 600;
+  margin: 0 0 10px;
+}
+
+.bio {
+  font-size: 14px;
+  color: $text-secondary;
+  margin: 0 0 10px;
+  line-height: 1.5;
+}
+
+.location {
+  font-size: 14px;
+  color: $text-secondary;
+  margin: 0 0 20px;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+
+  div {
+    text-align: center;
+  }
+}
+
+.statLabel {
+  display: block;
+  font-size: 12px;
+  color: $text-muted;
+  font-weight: 600;
+  text-transform: uppercase;
+  margin-bottom: 5px;
+}
+
+.statValue {
+  font-size: 20px;
+  font-weight: 700;
+  color: $primary;
+  margin: 0;
+}
+
+.reposHeader {
+  max-width: 1200px;
+  margin: 0 auto 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  h2 {
+    font-size: 24px;
+    font-weight: 700;
+    color: $text-primary;
+    margin: 0;
+  }
+}
+
+.controls {
+  display: flex;
+  gap: 12px;
+}
+
+.select {
+  padding: 8px 12px;
+  border: 1px solid $border;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: border-color 0.3s;
+
+  &:focus {
+    outline: none;
+    border-color: $primary;
+  }
+}
+
+.orderButton {
+  padding: 8px 12px;
+  background-color: $border-light;
+  border: 1px solid $border;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s;
+
+  &:hover {
+    background-color: $primary;
+    color: $white;
+    border-color: $primary;
+  }
+}
+
+.error {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  background: $error-bg;
+  border: 1px solid $error-border;
+  border-radius: 8px;
+  color: $error;
+}
+
+.loading,
+.noRepos {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  text-align: center;
+  color: $text-secondary;
+}
+
+.reposList {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.repoCard {
+  background: $white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: $shadow-sm;
+  text-decoration: none;
+  color: inherit;
+  transition: all 0.3s;
+  display: flex;
+  flex-direction: column;
+
+  &:hover {
+    box-shadow: $shadow-lg;
+    transform: translateY(-4px);
+  }
+}
+
+.repoName {
+  font-size: 18px;
+  font-weight: 700;
+  color: $text-primary;
+  margin: 0 0 10px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.repoDescription {
+  font-size: 14px;
+  color: $text-secondary;
+  margin: 0 0 15px;
+  flex: 1;
+  line-height: 1.4;
+}
+
+.repoMeta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+  color: $text-muted;
+  border-top: 1px solid $border-light;
+  padding-top: 12px;
+}
+
+.language {
+  background-color: $border-light;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-weight: 600;
+}
+
+.stars {
+  color: $primary;
+  font-weight: 600;
+}
