@@ -7,7 +7,7 @@ import Image from 'next/image';
 import { useSearchUsers } from '@/shared/lib/hooks/useSearchUsers';
 import { SearchResultUser } from '@/entities/github-user/model';
 import { SortBy, SortOrder } from '@/shared/lib/hooks/useUserRepositories';
-import styles from './page.module.css';
+import styles from './page.module.scss';
 
 export default function ResultsPage() {
   const searchParams = useSearchParams();
@@ -46,17 +46,17 @@ export default function ResultsPage() {
     <div className={styles.container}>
       <div className={styles.header}>
         <Link href="/search" className={styles.backButton}>
-          ← Back to Search
+          ← Voltar a pesquisa
         </Link>
-        <h1 className={styles.title}>Search Results</h1>
-        <p className={styles.query}>Results for: <strong>{query}</strong></p>
+        <h1 className={styles.title}>Resultado da pesquisa</h1>
+        <p className={styles.query}>Resultado para: <strong>{query}</strong></p>
       </div>
 
       {error && (
         <div className={styles.errorMessage}>
           <p>Error: {error}</p>
           <button onClick={() => search(query)} className={styles.retryButton}>
-            Retry
+            Tentar novamente
           </button>
         </div>
       )}
@@ -70,7 +70,7 @@ export default function ResultsPage() {
 
       {!loading && !error && users.length === 0 && (
         <div className={styles.emptyState}>
-          <p>No users found. Try a different search term.</p>
+          <p>Nenhum usuário encontrado. Tente um nome diferente no campo de pesquisa.</p>
         </div>
       )}
 
@@ -95,7 +95,7 @@ export default function ResultsPage() {
                 {sortOrder === 'asc' ? '↑ Asc' : '↓ Desc'}
               </button>
             </div>
-            <p className={styles.resultCount}>{users.length} users found</p>
+            <p className={styles.resultCount}>{users.length} usuários encontrados</p>
           </div>
 
           <div className={styles.usersList}>

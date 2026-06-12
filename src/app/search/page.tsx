@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import styles from './page.module.css';
+import styles from './page.module.scss';
 
 export default function SearchPage() {
   const [query, setQuery] = useState('');
@@ -19,19 +19,19 @@ export default function SearchPage() {
     <div className={styles.container}>
       <div className={styles.content}>
         <h1 className={styles.title}>GitHub User Search</h1>
-        <p className={styles.subtitle}>Find GitHub users and explore their repositories</p>
+        <p className={styles.subtitle}>Encontre os usuários no GitHub e explore seus repositórios</p>
 
         <form onSubmit={handleSearch} className={styles.form}>
           <input
             type="text"
-            placeholder="Enter GitHub username..."
+            placeholder="Digite o usuário GitHub..."
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             className={styles.input}
             autoFocus
           />
           <button type="submit" className={styles.button}>
-            Search
+            Pesquisar
           </button>
         </form>
       </div>

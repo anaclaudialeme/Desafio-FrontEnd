@@ -8,7 +8,7 @@ import { analyticsAdapter } from '@/shared/lib/api/analytics-adapter';
 import { SearchEventFactory } from '@/shared/lib/analytics/factory';
 import { gitHubAdapter } from '@/shared/lib/api/github-adapter';
 import { GitHubUser } from '@/entities/github-user/model';
-import styles from './page.module.css';
+import styles from './page.module.scss';
 
 interface UserPageProps {
   params: {
@@ -62,7 +62,7 @@ export default function UserPage({ params }: UserPageProps) {
   return (
     <div className={styles.container}>
       <Link href="/results" className={styles.backButton}>
-        ← Back to Results
+        ← Voltar aos resultados
       </Link>
 
       {user && (
